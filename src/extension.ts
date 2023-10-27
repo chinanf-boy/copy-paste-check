@@ -33,18 +33,18 @@ function createDecorationsOnTextEditor(duplicatedCodeProvider: DuplicatedCodePro
   const clones = duplicatedCodeProvider.getClones();
   const clonesInThisFile = clones
     .map(c => {
-      const side = ((clone: IClone) => {
-        if (clone.duplicationA.sourceId === fileName) { return 'a'; }
-        else if (clone.duplicationB.sourceId === fileName) { return 'b'; }
+      const sideA = ((clone: IClone) => {
+        if (clone.duplicationA.sourceId === fileName) { return true; }
+        else if (clone.duplicationB.sourceId === fileName) { return false; }
         else { return null; }
       })(c);
-      return { ...c, side };
+      return { ...c, sideA: sideA };
     })
-    .filter(c => c.side);
+    .filter(c => c.sideA);
   
   textEditor?.setDecorations(duplicatedCodeDecorationType, clonesInThisFile.map(c => {
-    const duplication = { a: c.duplicationA, b: c.duplicationB }[c.side!];
-    const duplicationOtherSide = { a: c.duplicationB, b: c.duplicationA }[c.side!]!;
+    const duplication = c.sideA! ? c.duplicationA : c.duplicationB;
+    const duplicationOtherSide = c.sideA! ? c.duplicationB : c.duplicationA;
     const otherSidePath = path.relative(fileName, duplicationOtherSide.sourceId);
     const duplicationOtherSideStart = duplicationOtherSide.start;
     const duplicationOtherSideStartString = `${duplicationOtherSideStart.line}:${duplicationOtherSideStart.column ?? 1}`;
