@@ -9,7 +9,13 @@ export class DuplicatedCodeProvider implements vscode.TreeDataProvider<Duplicate
   public _onDidChangeTreeData: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
   public onDidChangeTreeData: vscode.Event<void> = this._onDidChangeTreeData.event;
 
+  public onSearchedClones: () => void = () => {};
+
   private clones: IClone[] = [];
+  
+  getClones(): IClone[] {
+    return this.clones;
+  }
 
   constructor(private workspaceFolders: readonly vscode.WorkspaceFolder[] | undefined) {}
 
@@ -72,6 +78,8 @@ export class DuplicatedCodeProvider implements vscode.TreeDataProvider<Duplicate
         .detectInFiles([path, ...p2])
         .then((clones: IClone[]) => {
           this.clones = clones;
+
+          this.onSearchedClones();
 
           getStoreManager().close();
 

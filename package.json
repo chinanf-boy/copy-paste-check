@@ -14,7 +14,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:duplicatedCode"
+    "onView:duplicatedCode",
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "icon": "resources/logo.png",
